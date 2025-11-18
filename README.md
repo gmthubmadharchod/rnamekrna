@@ -4,7 +4,7 @@
   <img src="https://prod.assets.earlygamecdn.com/images/Chisa.jpg?transform=Banner+Webp" alt="Bot Channels" width="1080"/>
 </p>
 
-A powerful and dynamic Telegram bot designed to automatically rename files, with a fully interactive, button-based UI that can be configured dynamically by the owner.
+A powerful and dynamic Telegram bot designed to automatically rename files up to 2GB, with a fully interactive, button-based UI that can be configured dynamically by the owner.
 
 ---
 
@@ -113,6 +113,3 @@ This bot was made possible with the help and support of the following individual
 -   **[MASTER](https://t.me/V_Sbotmaker)**
 
 A special thanks to the **[REx BOTs](https://t.me/RexBots_Official)** channel for their inspiration and support!
-
-
-
