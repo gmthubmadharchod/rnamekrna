@@ -10,6 +10,7 @@ from pyrogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMa
 from helper.database import rexbots
 from config import Config
 from plugins.helper_func import *
+from plugins.Metadata import metadata_callback
 
 logger = logging.getLogger(__name__)
 
@@ -118,6 +119,25 @@ async def cb_handler(client, query: CallbackQuery):
                     InlineKeyboardButton("ʙᴀᴄᴋ", callback_data="home")
                 ]])
             )
+        elif data in ["on_metadata", "off_metadata", "metainfo"]:
+            await metadata_callback(client, query)
+
+        elif data == "commands":
+            await query.message.edit_text(
+                "**㊋ Yᴏᴜʀ Mᴇᴛᴀᴅᴀᴛᴀ ɪꜱ ᴄᴜʀʀᴇɴᴛʟʏ: {current}**".format(current=await rexbots.get_metadata(user_id)),
+                reply_markup=InlineKeyboardMarkup([
+                    [
+                        InlineKeyboardButton(f"Oɴ{' ✅' if await rexbots.get_metadata(user_id) == 'On' else ''}", callback_data='on_metadata'),
+                        InlineKeyboardButton(f"Oғғ{' ✅' if await rexbots.get_metadata(user_id) == 'Off' else ''}", callback_data='off_metadata')
+                    ],
+                    [
+                        InlineKeyboardButton("Hᴏᴡ ᴛᴏ Sᴇᴛ Mᴇᴛᴀᴅᴀᴛᴀ...!!", callback_data="metainfo")
+                    ],
+                    [
+                        InlineKeyboardButton("Bᴀᴄᴋ", callback_data="start")
+                    ]
+                ])
+            )
         elif data == "close":
             try:
                 await query.message.delete()
@@ -183,7 +203,8 @@ async def cb_handler(client, query: CallbackQuery):
             )
             keyboard = InlineKeyboardMarkup([
                 [InlineKeyboardButton("ᴠᴇʀɪꜰʏ 𝟷", callback_data="verify_1_cbb"), InlineKeyboardButton("ᴠᴇʀɪꜰʏ 𝟸", callback_data="verify_2_cbb")],
-                [InlineKeyboardButton("ᴄᴏᴜɴᴛs", callback_data="verify_count")]
+                [InlineKeyboardButton("ᴄᴏᴜɴᴛs", callback_data="verify_count")],
+                [InlineKeyboardButton("Bᴀᴄᴋ", callback_data="verify_settings")]
             ])
             await query.message.edit_text("ʜᴇʀᴇ ʏᴏᴜ ᴄᴀɴ ᴍᴀɴᴀɢᴇ ʏᴏᴜʀ ᴠᴇʀɪꜰɪᴄᴀᴛɪᴏɴ ᴘʀᴏᴄᴇꜱꜱ:\n\n ➲ ʏᴏᴜ ᴄᴀɴ ᴅᴏ ᴛᴜʀɴ ᴏɴ/ᴏꜰꜰ ᴠᴇʀɪꜰɪᴄᴀᴛɪᴏɴ ᴘʀᴏᴄᴇꜱꜱ & Aʟsᴏ ʏᴏᴜ ᴄᴀɴ sᴇᴇ ᴄᴏᴜɴᴛs.", reply_markup=keyboard)
 

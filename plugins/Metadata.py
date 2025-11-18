@@ -47,7 +47,6 @@ async def metadata(client, message):
     await message.reply_text(text=text, reply_markup=keyboard, disable_web_page_preview=True)
 
 
-@Client.on_callback_query(filters.regex(r"on_metadata|off_metadata|metainfo"))
 async def metadata_callback(client, query: CallbackQuery):
     user_id = query.from_user.id
     data = query.data
