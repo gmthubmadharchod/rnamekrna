@@ -3,6 +3,7 @@ import pytz
 import logging
 from config import Config
 from datetime import timedelta, datetime, date, timezone
+from helper.utils import send_log
 
 class Seishiro:
     def __init__(self, uri, database_name):
