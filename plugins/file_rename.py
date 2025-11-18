@@ -864,16 +864,17 @@ async def auto_rename_files(client, message):
                 'progress_args': ("Uᴘʟᴏᴀᴅ sᴛᴀʀᴛᴇᴅ ᴅᴜᴅᴇ...!!", msg, time.time())
             }
 
+            sent_message = None
             if media_type == "document":
-                await client.send_document(document=file_path, **common_upload_params)
+                sent_message = await client.send_document(document=file_path, **common_upload_params)
             elif media_type == "video":
                 if duration > 0:
                     common_upload_params['duration'] = int(duration)
-                await client.send_video(video=file_path, **common_upload_params)
+                sent_message = await client.send_video(video=file_path, **common_upload_params)
             elif media_type == "audio":
                 if duration > 0:
                     common_upload_params['duration'] = int(duration)
-                await client.send_audio(audio=file_path, **common_upload_params)
+                sent_message = await client.send_audio(audio=file_path, **common_upload_params)
 
             if Config.DUMP:
                 try:
@@ -903,21 +904,21 @@ async def auto_rename_files(client, message):
                     if media_type == "document" and sent_message.document:
                         await client.send_document(
                             chat_id=dump_channel,
-                            document=file_path,
+                            document=sent_message.document.file_id,
                             thumb=ph_path,
                             caption=dump_caption
                         )
                     elif media_type == "video" and sent_message.video:
                         await client.send_video(
                             chat_id=dump_channel,
-                            video=file_path,
+                            video=sent_message.video.file_id,
                             thumb=ph_path,
                             caption=dump_caption
                         )
                     elif media_type == "audio" and sent_message.audio:
                         await client.send_audio(
                             chat_id=dump_channel,
-                            audio=file_path,
+                            audio=sent_message.audio.file_id,
                             thumb=ph_path,
                             caption=dump_caption
                         )
