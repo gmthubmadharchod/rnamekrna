@@ -740,11 +740,6 @@ async def is_user_verified(user_id):
 async def verify_command(client, message: Message):
     """Check verification status or initiate verification"""
     user_id = message.from_user.id
-
-    if not verify_status_1 and not verify_status_2:
-        logger.info(f"[VERIFY] Verification disabled, showing start message")
-        await message.reply_text("Sʜᴏʀᴛᴇɴᴇʀ(s) ᴀʀᴇ ᴅɪsᴀʙʟᴇᴅ ɴᴏᴡ...!!")
-        return
     
     try:
         # Check if user has premium
