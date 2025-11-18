@@ -1,7 +1,7 @@
 # Auto Rename Bot ✨
 
 <p align="center">
-  <img src="https://i.imgur.com/8V1T91D.jpg" alt="Bot Channels" width="700"/>
+  <img src="https://prod.assets.earlygamecdn.com/images/Chisa.jpg?transform=Banner+Webp" alt="Bot Channels" width="700"/>
 </p>
 
 A powerful and dynamic Telegram bot designed to automatically rename files, with a fully interactive, button-based UI that can be configured dynamically by the owner.
