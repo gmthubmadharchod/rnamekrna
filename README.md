@@ -1,30 +1,35 @@
-# Auto Rename Bot ✨
-
-<p align="center">
-  <img src="https://prod.assets.earlygamecdn.com/images/Chisa.jpg?transform=Banner+Webp" alt="Bot Channels" width="1080"/>
-</p>
-
-A powerful and dynamic Telegram bot designed to automatically rename files up to 2GB, with a fully interactive, button-based UI that can be configured dynamically by the owner.
-
----
-
-## 🚀 Features
-
--   **✍️ Auto Rename:** Automatically rename files based on a user-defined format.
--   **🖼️ Custom Thumbnail & Caption:** Set your own custom thumbnails and captions for renamed files.
--   **🎞️ Metadata Support:** View and manage metadata for your files.
--   **SEQUENCE MODE:** Send multiple files and have them renamed and sent back in a perfect sequence.
--   **FORCE SUBSCRIBE:** Ensure users join designated channels before they can use the bot.
--   **⚙️ In-Bot Configuration:** The bot owner can manage all important settings directly from the bot's UI.
--   **🔐 Secure:** No hardcoded credentials. All sensitive information is loaded from environment variables.
--   **🏆 Leaderboard:** Track user activity and see who has renamed the most files.
+<div align="center">
+  <img src="https://i.imgur.com/8V1T91D.jpg" alt="Bot Banner" width="800"/>
+  <h1>Auto Rename Bot</h1>
+  <p>
+    <b>A powerful and dynamic Telegram bot designed to automatically rename files up to 2GB, with a fully interactive, button-based UI that can be configured dynamically by the owner.</b>
+  </p>
+  
+  <p>
+    <img src="https://img.shields.io/badge/Python-3.9%2B-blue?style=for-the-badge&logo=python" alt="Python Version">
+    <img src="https://img.shields.io/badge/Pyrogram-2.0-orange?style=for-the-badge&logo=telegram" alt="Pyrogram Version">
+    <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License">
+  </p>
+</div>
 
 ---
 
-## 🤖 Bot Commands
+## 🚀 Core Features
 
-The bot is primarily controlled through a user-friendly button interface. Here are the initial commands to get started:
+-   **✍️ Advanced Auto-Rename:** Automatically rename files based on a custom format, with support for season, episode, quality, and audio extraction.
+-   **🖼️ Customization:** Set your own custom thumbnails and captions to give your files a personal touch.
+-   **🎞️ Metadata Control:** View and manage metadata for your video files, including title, author, and more.
+-   **🗂️ Sequence Mode:** Send multiple files and have them renamed and sent back in a perfect, ordered sequence.
+-   **🔐 Force Subscribe:** Ensure users join designated channels before they can use the bot.
+-   **⚙️ Dynamic Configuration:** The bot owner can manage all important settings directly from the bot's UI, without needing to restart.
+-   **🏆 User Leaderboard:** A built-in leaderboard tracks user activity and showcases the top file renamers.
+-   **🔒 Secure:** All sensitive information is loaded from environment variables, not hardcoded.
 
+---
+
+<details>
+  <summary><h2>🤖 Bot Commands (Click to Expand)</h2></summary>
+  
 -   `/start` - sᴛᴀʀᴛ ᴛʜᴇ ʙᴏᴛ
 -   `/autorename` - ᴛᴏ sᴇᴛ ᴀ ᴀᴜᴛᴏ ʀᴇɴᴀᴍᴇ ғᴏʀᴍᴀᴛ
 -   `/showformat` - Tᴏ sᴇᴇ ʏᴏᴜʀ ғᴏʀᴍᴀᴛ
@@ -59,44 +64,47 @@ The bot is primarily controlled through a user-friendly button interface. Here a
 -   `/unban` - ᴜɴʙᴀɴ ᴀ ᴜsᴇʀ (ᴀᴅᴍɪɴ)
 -   `/banned` - sʜᴏᴡ ʙᴀɴɴᴇᴅ ᴜsᴇʀs (ᴀᴅᴍɪɴ)
 
+</details>
+
 ---
 
 ## 🛠️ How to Deploy
 
-You can easily deploy this bot yourself. Follow the steps below.
+You can easily deploy this bot yourself by following the steps below.
 
-### **Prerequisites**
+### **1. Prerequisites**
 
--   A Telegram Bot Token. Get one from [@BotFather](https://t.me/BotFather).
--   Your Telegram API ID and API Hash. Get them from [my.telegram.org](https://my.telegram.org).
--   A MongoDB database URL. Get one for free from [MongoDB Atlas](https://www.mongodb.com/cloud/atlas).
+-   **Telegram Bot Token:** Get one from [@BotFather](https://t.me/BotFather).
+-   **Telegram API ID & Hash:** Get them from [my.telegram.org](https://my.telegram.org).
+-   **MongoDB Database URL:** Get a free one from [MongoDB Atlas](https://www.mongodb.com/cloud/atlas).
 
-### **Deployment Steps**
+### **2. Deployment Steps**
 
-1.  **Clone the repository:**
+1.  **Clone the Repository:**
     ```bash
     git clone https://github.com/your-username/your-repo-name.git
     cd your-repo-name
     ```
 
-2.  **Install dependencies:**
+2.  **Install Dependencies:**
     ```bash
     pip install -r requirements.txt
     ```
 
-3.  **Set up Environment Variables:**
-    Create a `.env` file in the root directory or set the following environment variables in your deployment environment:
+3.  **Set Up Environment Variables:**
+    Create a `.env` file or set the following environment variables in your deployment environment:
 
-    | Variable      | Description                                |
-    |---------------|--------------------------------------------|
-    | `API_ID`      | Your Telegram App ID.                      |
-    | `API_HASH`    | Your Telegram App Hash.                    |
-    | `BOT_TOKEN`   | Your Telegram bot token from @BotFather.   |
-    | `DB_URL`      | Your MongoDB connection URL.               |
-    | `OWNER_ID`    | Your numerical Telegram User ID.           |
-    | `LOG_CHANNEL` | The ID of the channel where the bot will send logs/notifications. |
+| Variable      | Description                                | Required |
+|---------------|--------------------------------------------|----------|
+| `API_ID`      | Your Telegram App ID.                      | **Yes**  |
+| `API_HASH`    | Your Telegram App Hash.                    | **Yes**  |
+| `BOT_TOKEN`   | Your Telegram bot token from @BotFather.   | **Yes**  |
+| `DB_URL`      | Your MongoDB connection URL.               | **Yes**  |
+| `OWNER_ID`    | Your numerical Telegram User ID.           | **Yes**  |
+| `LOG_CHANNEL` | The ID of the channel for bot logs.        | **Yes**  |
 
-4.  **Run the bot:**
+
+4.  **Run the Bot:**
     ```bash
     python3 bot.py
     ```
@@ -105,11 +113,12 @@ You can easily deploy this bot yourself. Follow the steps below.
 
 ## 🙏 Credits & Acknowledgements
 
-This bot was made possible with the help and support of the following individuals and projects:
+This project was made possible by the inspiration and foundational work of others in the community.
 
--   **Base Repository:** A special thanks to **[Jishu Developer](https://github.com/JishuDeveloper)** for their foundational work.
+-   **Base Repository:** A special thanks to **[Jishu Developer](https://github.com/JishuDeveloper)** for their original work.
+-   **Inspiration & Support:** **[REx BOTs](https://t.me/RexBots_Official)**
+
+### **Contributors**
 -   **[ABHINAI](https://t.me/about_zani)**
 -   **[ABHINAV](https://t.me/adityaabhinav)**
 -   **[MASTER](https://t.me/V_Sbotmaker)**
-
-A special thanks to the **[REx BOTs](https://t.me/RexBots_Official)** channel for their inspiration and support!
