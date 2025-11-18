@@ -9,8 +9,8 @@ class Config(object):
     PORT = os.environ.get("PORT", "8980")
 
     # database config
-    DB_NAME = os.environ.get("DB_NAME","madflixbotz")     
-    DB_URL  = os.environ.get("DB_URL","")
+    DB_NAME = os.environ.get("DB_NAME", "RexBots")     
+    DB_URL  = os.environ.get("DB_URL", "")
  
     # other configs
     ADMIN_URL = "https://t.me/adityaabhinav"
