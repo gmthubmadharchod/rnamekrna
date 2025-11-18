@@ -394,7 +394,7 @@ async def show_start_message(client, message: Message):
     await asyncio.sleep(0.4)
     await m.delete()
 
-    await message.reply_sticker("CAACAgUAAxkBAAEOtVNoUAphgIzDsgHV10rbfmFKNIgMlwACPQsAApWaqVbHL7SvWBBaITYE")
+    await message.reply_sticker("CAACAgUAAxkBAAEOcZBoHtzt2LPLp2H6yTblKDPdT9oroQACrRUAAmSm2FeGMk8-cGYtcDYE")
 
     buttons = InlineKeyboardMarkup([
         [
@@ -837,3 +837,7 @@ async def verify_command(client, message: Message):
             f"<b><i>! Eʀʀᴏʀ, Cᴏɴᴛᴀᴄᴛ ᴅᴇᴠᴇʟᴏᴘᴇʀ ᴛᴏ sᴏʟᴠᴇ ᴛʜᴇ ɪssᴜᴇs @seishiro_obito</i></b>\n"
             f"<blockquote expandable><b>Rᴇᴀsᴏɴ:</b> {str(e)}</blockquote>"
         )
+
+
+
+
