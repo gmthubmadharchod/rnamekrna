@@ -17,8 +17,8 @@ class Config(object):
     DUMP_CHANNEL = os.environ.get("DUMP_CHANNEL", "-1002257657458")
     DUMP = True
     BOT_UPTIME  = time.time()
-    START_PIC   = os.environ.get("START_PIC", "https://graph.org/file/4b306f4b15c23a8f22e58.jpg")
-    LEADERBOARD_PIC = os.environ.get("LEADERBOARD_PIC", "https://graph.org/file/4b306f4b15c23a8f22e58.jpg")
+    START_PIC   = os.environ.get("START_PIC", "https://ibb.co/Cs0zsrCn")
+    LEADERBOARD_PIC = os.environ.get("LEADERBOARD_PIC", "https://ibb.co/RGx4RmDg")
     OWNER_ID = int(os.environ.get("OWNER_ID", "6701907262"))
     SUPPORT_CHAT = int(os.environ.get("SUPPORT_CHAT", "-1002871570975"))
     LOG_CHANNEL = int(os.environ.get("LOG_CHANNEL", ""))
