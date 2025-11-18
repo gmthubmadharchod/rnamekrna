@@ -464,6 +464,7 @@ async def handle_verification_callback(client, message: Message, token: str):
         token_created_at = verification_data.get("token_created_at")
         
         logger.info(f"[VERIFY] token_user_id: {token_user_id}, token_created_at: {token_created_at}")
+        selected_shortener = verification_data.get("selected_shortener")
         
         # Check if token belongs to this user
         if token_user_id != user_id:
@@ -553,7 +554,8 @@ async def handle_verification_callback(client, message: Message, token: str):
         )
         
         logger.info(f"[VERIFY] Verification complete for user {user_id}!")
-        await rexbots.save_verification(user_id, selected_shortener)
+        if selected_shortener:
+            await rexbots.save_verification(user_id, selected_shortener)
         
     except Exception as e:
         logger.error(f"[VERIFY] FATAL ERROR in handle_verification_callback: {e}", exc_info=True)
@@ -608,7 +610,8 @@ async def send_verification_message(client, message: Message):
         {"$set": {
             "verification.pending_token": token,
             "verification.token_created_at": current_time,
-            "verification.token_user_id": user_id
+            "verification.token_user_id": user_id,
+            "verification.selected_shortener": selected_shortener
         }},
         upsert=True
     )
