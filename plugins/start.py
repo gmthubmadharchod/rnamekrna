@@ -249,6 +249,11 @@ async def not_joined(client: Client, message: Message):
     logger.debug(f"not_joined function called for user {message.from_user.id}")
     temp = await message.reply("<b><i>ᴡᴀɪᴛ ᴀ sᴇᴄ..</i></b>")
 
+    # Add a check to ensure temp message exists before proceeding
+    if not temp:
+        logger.warning("Failed to send temporary message in not_joined")
+        return
+
     user_id = message.from_user.id
     buttons = []
     count = 0
@@ -302,7 +307,11 @@ async def not_joined(client: Client, message: Message):
 
                     buttons.append([InlineKeyboardButton(text=name, url=link)])
                     count += 1
-                    await temp.edit(f"<b>{'! ' * count}</b>")
+                    try:
+                        await temp.edit(f"<b>{'! ' * count}</b>")
+                    except Exception as e:
+                        logger.warning(f"Failed to edit message in not_joined: {e}")
+
 
                 except Exception as e:
                     logger.error(f"Error with chat {chat_id}: {e}")
@@ -323,7 +332,11 @@ async def not_joined(client: Client, message: Message):
             pass
 
         text = "<b>Yᴏᴜ Bᴀᴋᴋᴀᴀ...!! \n\n<blockquote>Jᴏɪɴ ᴍʏ ᴄʜᴀɴɴᴇʟ ᴛᴏ ᴜsᴇ ᴍʏ ᴏᴛʜᴇʀᴡɪsᴇ Yᴏᴜ ᴀʀᴇ ɪɴ ʙɪɢ sʜɪᴛ...!!</blockquote></b>"
-        await temp.delete()
+        if temp:
+            try:
+                await temp.delete()
+            except Exception as e:
+                logger.warning(f"Failed to delete temp message in not_joined: {e}")
         
         logger.debug(f"Sending final reply photo to user {user_id}")
         await message.reply_photo(

@@ -3,6 +3,7 @@ import pytz
 import logging
 from config import Config
 from datetime import timedelta, datetime, date, timezone
+from helper.utils import send_log
 
 class Seishiro:
     def __init__(self, uri, database_name):
@@ -49,7 +50,7 @@ class Seishiro:
             )
         )
 
-    async def save_verification(self, user_id, selected_shortener):
+    async def save_verification(self, user_id, verification_type):
         """
         Save verification event to verification_data collection
         This creates a separate record for each verification event
@@ -58,8 +59,8 @@ class Seishiro:
         verification = {
             "user_id": int(user_id),
             "verified_at": now,
-            "verification_type": selected_shortener,
-            "date": now.date().isoformat()  # Store date for easier querying
+            "verification_type": verification_type,
+            "date": now.date().isoformat()
         }
         await self.verification_data.insert_one(verification)
         logging.info(f"Verification event saved for user {user_id}, type {verification_type} at {now}")
