@@ -3,27 +3,27 @@ id_pattern = re.compile(r'^.\d+$')
 
 class Config(object):
     # pyro client config
-    API_ID    = os.environ.get("API_ID", "")
-    API_HASH  = os.environ.get("API_HASH", "")
-    BOT_TOKEN = os.environ.get("BOT_TOKEN", "")
+    API_ID    = os.environ.get("API_ID", "27322718")
+    API_HASH  = os.environ.get("API_HASH", "4f6d1b67cf101aea5cf0536885aa1b82")
+    BOT_TOKEN = os.environ.get("BOT_TOKEN", "8480511759:AAE5VtPMYUC4AYkPnCYTmd15g9LaCfFNSOo")
     PORT = os.environ.get("PORT", "8980")
 
     # database config
     DB_NAME = os.environ.get("DB_NAME","madflixbotz")     
-    DB_URL  = os.environ.get("DB_URL","")
+    DB_URL  = os.environ.get("DB_URL","mongodb+srv://user1:abhinai.2244@cluster0.7oaqx.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
  
     # other configs
     ADMIN_URL = "https://t.me/adityaabhinav"
-    DUMP_CHANNEL = os.environ.get("DUMP_CHANNEL", "-1002257657458")
+    DUMP_CHANNEL = os.environ.get("DUMP_CHANNEL", "-1002741915396")
     DUMP = True
     BOT_UPTIME  = time.time()
     START_PIC   = os.environ.get("START_PIC", "https://graph.org/file/4b306f4b15c23a8f22e58.jpg")
     LEADERBOARD_PIC = os.environ.get("LEADERBOARD_PIC", "https://graph.org/file/4b306f4b15c23a8f22e58.jpg")
-    OWNER_ID = int(os.environ.get("OWNER_ID", "6701907262"))
+    OWNER_ID = int(os.environ.get("OWNER_ID", "5756495153"))
     SUPPORT_CHAT = int(os.environ.get("SUPPORT_CHAT", "-1002871570975"))
-    LOG_CHANNEL = int(os.environ.get("LOG_CHANNEL", ""))
-    FSUB_PIC = os.environ.get("FSUB_PIC", "")
-    BOT_USERNAME = os.environ.get("BOT_USERNAME", "")
+    LOG_CHANNEL = int(os.environ.get("LOG_CHANNEL", "-1002741915396"))
+    FSUB_PIC = os.environ.get("FSUB_PIC", "https://ibb.co/mVkSySr7")
+    BOT_USERNAME = os.environ.get("BOT_USERNAME", "@Komizbot")
     LEADERBOARD_DELETE_TIMER = 30
     # wes response configuration     
     WEBHOOK = bool(os.environ.get("WEBHOOK", "True"))
