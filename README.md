@@ -82,8 +82,8 @@ You can easily deploy this bot yourself by following the steps below.
 
 1.  **Clone the Repository:**
     ```bash
-    git clone https://github.com/your-username/your-repo-name.git
-    cd your-repo-name
+    git clone https://github.com/abhinai2244/Auto-Rename.git
+    cd Auto-Rename
     ```
 
 2.  **Install Dependencies:**
