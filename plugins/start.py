@@ -651,6 +651,8 @@ async def send_verification_message(client, message: Message):
     verify_status_2 = settings.get("verify_status_2", False)
     verified_time_1 = settings.get("verified_time_1")
     verified_time_2 = settings.get("verified_time_2")
+    tutorial_1 = settings.get("verify_tutorial_1", "not set")
+    tutorial_2 = settings.get("verify_tutorial_2", "not set")
     
     # Get available shorteners
     available_shorteners = []
@@ -695,9 +697,23 @@ async def send_verification_message(client, message: Message):
         return None
     
     # Send button with shortlink (e.g., https://lksfy.com/eARog)
-    buttons = InlineKeyboardMarkup([[
-        InlineKeyboardButton("• Vᴇʀɪғʏ •", url=shortlink)
-    ]])
+    buttons_list = []
+
+    # Verify 1 buttons
+    if selected_shortener == 1:
+        row = [InlineKeyboardButton("🔐 Vᴇʀɪꜰʏ 𝟷", url=shortlink)]
+        if tutorial_1 != "not set":
+            row.append(InlineKeyboardButton("📘 Tᴜᴛᴏʀɪᴀʟ 𝟷", url=tutorial_1))
+        buttons_list.append(row)
+
+    # Verify 2 buttons
+    elif selected_shortener == 2:
+        row = [InlineKeyboardButton("🔐 Vᴇʀɪꜰʏ 𝟸", url=shortlink)]
+        if tutorial_2 != "not set":
+            row.append(InlineKeyboardButton("📘 Tᴜᴛᴏʀɪᴀʟ 𝟸", url=tutorial_2))
+        buttons_list.append(row)
+    
+    buttons = InlineKeyboardMarkup(buttons_list)
     
     await message.reply_text(
         f"ʜᴇʏ {message.from_user.mention},\n\n"
