@@ -662,20 +662,23 @@ async def send_verification_message(client, message: Message):
     verified_time_2 = settings.get("verified_time_2")
     tutorial_1 = settings.get("verify_tutorial_1", "not set")
     tutorial_2 = settings.get("verify_tutorial_2", "not set")
-    
-    # Get available shorteners
-    available_shorteners = []
+    user_data = await rexbots.col.find_one({"_id": user_id}) or {}
+    verification = user_data.get("verification", {})
+    verified_time_1 = verification.get("verified_time_1")
+    verified_time_2 = verification.get("verified_time_2")
+    shortener_2_available_at = verification.get("shortener_2_available_at")
+    current_time = datetime.utcnow()
+    selected_shortener = None
     if verify_status_1:
-        available_shorteners.append(1)
-    if verify_status_2:
-        available_shorteners.append(2)
-    
-    if not available_shorteners:
-        await show_start_message(client, message)
-        return 
-    
-    # Randomly select a shortener from available ones
-    selected_shortener = random.choice(available_shorteners)
+        if not verified_time_1 or current_time > verified_time_1 + timedelta(hours=24):
+            selected_shortener = 1
+    if verify_status_2 and verified_time_1:
+        if shortener_2_available_at and current_time >= shortener_2_available_at:
+            if not verified_time_2 or current_time > verified_time_2 + timedelta(hours=24):
+                selected_shortener = 2
+    if not selected_shortener:
+        await message.reply_text("✅ Yᴏᴜ ᴀʀᴇ ᴀʟʀᴇᴀᴅʏ ᴠᴇʀɪғɪᴇᴅ!\n\n⏰ Vᴇʀɪғɪᴄᴀᴛɪᴏɴ ɪs sᴛɪʟʟ ᴠᴀʟɪᴅ.")
+        return
     
     # Generate a random token for verification
     token = ''.join(random.choices(string.ascii_letters + string.digits, k=10))
