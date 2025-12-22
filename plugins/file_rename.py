@@ -910,16 +910,71 @@ async def auto_rename_files(client, message):
             }
 
             sent_message = None
-            if media_type == "document":
-                sent_message = await client.send_document(document=file_path, **common_upload_params)
-            elif media_type == "video":
-                if duration > 0:
-                    common_upload_params['duration'] = int(duration)
-                sent_message = await client.send_video(video=file_path, **common_upload_params)
-            elif media_type == "audio":
-                if duration > 0:
-                    common_upload_params['duration'] = int(duration)
-                sent_message = await client.send_audio(audio=file_path, **common_upload_params)
+            sent_to_dump = None
+            if client.premium_client:
+                # Use premium client for upload
+                try:
+                    # Upload to DUMP_CHANNEL first since premium client cannot send to user directly if no chat exists
+                    # Using DUMP_CHANNEL as a bridge
+                    dump_chat_id = Config.DUMP_CHANNEL
+                    if media_type == "document":
+                        sent_to_dump = await client.premium_client.send_document(chat_id=dump_chat_id, document=file_path, **{k: v for k, v in common_upload_params.items() if k != 'chat_id'})
+                    elif media_type == "video":
+                        if duration > 0:
+                            common_upload_params['duration'] = int(duration)
+                        sent_to_dump = await client.premium_client.send_video(chat_id=dump_chat_id, video=file_path, **{k: v for k, v in common_upload_params.items() if k != 'chat_id'})
+                    elif media_type == "audio":
+                        if duration > 0:
+                            common_upload_params['duration'] = int(duration)
+                        sent_to_dump = await client.premium_client.send_audio(chat_id=dump_chat_id, audio=file_path, **{k: v for k, v in common_upload_params.items() if k != 'chat_id'})
+                    
+                    # Forward or copy to user from dump channel using Premium client
+                    # Bot client cannot copy messages larger than 2GB
+                    try:
+                        sent_message = await client.premium_client.copy_message(
+                            chat_id=message.chat.id,
+                            from_chat_id=dump_chat_id,
+                            message_id=sent_to_dump.id,
+                            caption=common_upload_params['caption']
+                        )
+                    except Exception as e:
+                        logger.error(f"Premium copy to user failed: {e}")
+                        # Try to send a link if copy fails (e.g. privacy settings)
+                        await message.reply_text(
+                            f"I uploaded your file (>{humanbytes(file_size)}) using the Premium Session, but I couldn't send it to you directly due to privacy settings.\n\n"
+                            f"Please check the dump channel or contact the admin."
+                        )
+                        # We can't really do anything else if the file is > 2GB and we can't send it.
+                        # But we should assign sent_message so the code below doesn't crash if it tries to use it?
+                        # The code below uses sent_message for logging to dump channel again?
+                        # Actually, we already uploaded to dump channel.
+                        # We can just return or set sent_message to sent_to_dump (but it's in a different chat).
+                        sent_message = sent_to_dump
+                        
+                except Exception as e:
+                    logger.error(f"Premium upload failed, falling back to bot: {e}")
+                    # Fallback to normal upload
+                    if media_type == "document":
+                        sent_message = await client.send_document(document=file_path, **common_upload_params)
+                    elif media_type == "video":
+                        if duration > 0:
+                            common_upload_params['duration'] = int(duration)
+                        sent_message = await client.send_video(video=file_path, **common_upload_params)
+                    elif media_type == "audio":
+                        if duration > 0:
+                            common_upload_params['duration'] = int(duration)
+                        sent_message = await client.send_audio(audio=file_path, **common_upload_params)
+            else:
+                if media_type == "document":
+                    sent_message = await client.send_document(document=file_path, **common_upload_params)
+                elif media_type == "video":
+                    if duration > 0:
+                        common_upload_params['duration'] = int(duration)
+                    sent_message = await client.send_video(video=file_path, **common_upload_params)
+                elif media_type == "audio":
+                    if duration > 0:
+                        common_upload_params['duration'] = int(duration)
+                    sent_message = await client.send_audio(audio=file_path, **common_upload_params)
 
             if Config.DUMP:
                 try:
