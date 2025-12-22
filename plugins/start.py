@@ -581,17 +581,26 @@ async def handle_verification_callback(client, message: Message, token: str):
         # All checks passed - Update verification time (24 hour validity)
         logger.info(f"[VERIFY] All checks passed! Updating database...")
         
+        update_fields = {}
+        unset_fields = {
+            "verification.pending_token": "",
+            "verification.token_created_at": "",
+            "verification.token_user_id": ""
+        }
+
+        if selected_shortener == 1:
+            gap_hours = settings.get("verify_gap_hours", 0)  # default 0 if not set
+            update_fields["verification.verified_time_1"] = current_time
+            update_fields["verification.shortener_2_available_at"] = current_time + timedelta(hours=gap_hours)
+
+        elif selected_shortener == 2:
+        update_fields["verification.verified_time_2"] = current_time
         update_result = await rexbots.col.update_one(
             {"_id": user_id},
-            {"$set": {
-                "verification.verified_time_1": current_time,
-                "verification.verified_time_2": current_time
+            {
+                "$set": update_fields,
+                "$unset": unset_fields
             },
-             "$unset": {
-                "verification.pending_token": "",
-                "verification.token_created_at": "",
-                "verification.token_user_id": ""
-             }},
             upsert=True
         )
         
