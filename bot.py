@@ -39,6 +39,16 @@ class Bot(Client):
             sleep_threshold=15,
         )
         self.start_time = time.time()
+        self.premium_client = None
+        if Config.STRING_SESSION:
+            self.premium_client = Client(
+                name="premium_session",
+                api_id=Config.API_ID,
+                api_hash=Config.API_HASH,
+                session_string=Config.STRING_SESSION,
+                no_updates=True
+            )
+
 # ----------------------------------------
 # 𝐌𝐀𝐃𝐄 𝐁𝐘 𝐀𝐁𝐇𝐈
 # 𝐓𝐆 𝐈𝐃 : @𝐂𝐋𝐔𝐓𝐂𝐇𝟎𝟎𝟖
@@ -46,6 +56,10 @@ class Bot(Client):
 # --
     async def start(self):
         await super().start()
+        if self.premium_client:
+            await self.premium_client.start()
+            print("Premium Client Started")
+
         me = await self.get_me()
         self.mention = me.mention
         self.username = me.username
@@ -75,6 +89,11 @@ class Bot(Client):
                 )
             except Exception as e:
                 print(f"Failed to send message in chat {chat_id}: {e}")
+
+    async def stop(self, *args):
+        if self.premium_client:
+            await self.premium_client.stop()
+        await super().stop()
 
 Bot().run()
 # ----------------------------------------
