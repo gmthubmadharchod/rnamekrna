@@ -814,30 +814,43 @@ async def get_shortlink(link, shortener_num):
 # 𝐀𝐍𝐘 𝐈𝐒𝐒𝐔𝐄𝐒 𝐎𝐑 𝐀𝐃𝐃𝐈𝐍𝐆 𝐌𝐎𝐑𝐄 𝐓𝐇𝐈𝐍𝐆𝐬 𝐂𝐀𝐍 𝐂𝐎𝐍𝐓𝐀𝐂𝐓 𝐌𝐄
 # ----------------------------------------
 async def is_user_verified(user_id):
-    """Check if user is verified (either verified_time_1 or verified_time_2 is valid)"""
+    """Check if user is verified (either shortener 1 or 2 is valid for 24h)"""
     try:
         user_data = await rexbots.col.find_one({"_id": user_id})
         if not user_data:
             return False
         
-        verification_data = user_data.get("verification", {})
-        verified_time_1 = verification_data.get("verified_time_1")
-        verified_time_2 = verification_data.get("verified_time_2")
+        verification = user_data.get("verification", {})
+        verified_time_1 = verification.get("verified_time_1")
+        verified_time_2 = verification.get("verified_time_2")
         
         current_time = datetime.utcnow()
-        
-        # Check if either verification is valid (within 24 hours)
-        if verified_time_1:
-            if isinstance(verified_time_1, datetime):
-                if current_time < verified_time_1 + timedelta(hours=24):
-                    return True
-        
-        if verified_time_2:
-            if isinstance(verified_time_2, datetime):
-                if current_time < verified_time_2 + timedelta(hours=24):
-                    return True
-        
-        return False
+        valid = False
+        unset_fields = {}
+
+        # ---- Shortener 1 ----
+        if isinstance(verified_time_1, datetime):
+            if current_time < verified_time_1 + timedelta(hours=24):
+                valid = True
+            else:
+                unset_fields["verification.verified_time_1"] = ""
+
+        # ---- Shortener 2 ----
+        if isinstance(verified_time_2, datetime):
+            if current_time < verified_time_2 + timedelta(hours=24):
+                valid = True
+            else:
+                unset_fields["verification.verified_time_2"] = ""
+
+        # Cleanup expired entries
+        if unset_fields:
+            await rexbots.col.update_one(
+                {"_id": user_id},
+                {"$unset": unset_fields}
+            )
+
+        return valid
+
     except Exception as e:
         logger.error(f"Error checking if user is verified: {e}")
         return False
