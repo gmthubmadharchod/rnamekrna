@@ -225,6 +225,14 @@ class Seishiro:
             {'$set': {'verify_status_2': status}},
             upsert=True
         )
+
+    async def get_verify_tutorial_1(self):
+        settings = await self.get_verification_settings()
+        return settings.get("verify_tutorial_1", "not set")
+    
+    async def get_verify_tutorial_2(self):
+        settings = await self.get_verification_settings()
+        return settings.get("verify_tutorial_2", "not set")
   # ----------------------------------------
 # 𝐌𝐀𝐃𝐄 𝐁𝐘 𝐀𝐁𝐇𝐈
 # 𝐓𝐆 𝐈𝐃 : @𝐂𝐋𝐔𝐓𝐂𝐇𝟎𝟎𝟖
