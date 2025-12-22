@@ -107,9 +107,10 @@ def check_verification(func):
     async def wrapper(client, message, *args, **kwargs):
         user_id = message.from_user.id
         logger.debug(f"check_verification decorator called for user {user_id}")
-        
+
         try:
-            text = message.text
+            # 1️⃣ Handle deep-link verification callback
+            text = message.text or ""
             if len(text) > 7:
                 try:
                     param = text.split(" ", 1)[1]
@@ -117,94 +118,36 @@ def check_verification(func):
                         token = param[7:]
                         await handle_verification_callback(client, message, token)
                         return
-                        
                 except Exception as e:
                     logger.error(f"Error processing start parameter: {e}")
-    
-            # Step 1: Check if user has premium access - premium users bypass verification
+
+            # 2️⃣ Premium users bypass verification
             try:
                 if await check_user_premium(user_id):
-                    logger.debug(f"User {user_id} has premium, bypassing verification")
                     return await func(client, message, *args, **kwargs)
             except Exception as e:
-                logger.error(f"Error checking premium status in decorator: {e}")
-                # Continue with verification check even if premium check fails
-            
-            # Step 2: Get verification settings to check if verification is enabled
+                logger.error(f"Premium check failed: {e}")
+
+            # 3️⃣ Check if verification system is enabled
             settings = await rexbots.get_verification_settings()
-            verify_status_1 = settings.get("verify_status_1", False)
-            verify_status_2 = settings.get("verify_status_2", False)
-            
-            # If both verification systems are disabled, allow access
-            if not verify_status_1 and not verify_status_2:
-                logger.debug(f"Verification disabled, allowing user {user_id}")
+            if not settings.get("verify_status_1") and not settings.get("verify_status_2"):
                 return await func(client, message, *args, **kwargs)
-            
-            # Step 3: Check if user is already verified (EXACTLY like /verify command)
-            try:
-                if await is_user_verified(user_id):
-                    try:
-                        user_data = await rexbots.col.find_one({"_id": user_id}) or {}
-                        verification_data = user_data.get("verification", {})
-                        
-                        verified_time_1 = verification_data.get("verified_time_1")
-                        verified_time_2 = verification_data.get("verified_time_2")
-                        
-                        current_time = datetime.utcnow()
-                        
-                        # Check if fully verified (shortener 1 within 24 hours)
-                        if verified_time_1:
-                            try:
-                                if isinstance(verified_time_1, datetime) and current_time < verified_time_1 + timedelta(hours=24):
-                                    time_left = timedelta(hours=24) - (current_time - verified_time_1)
-                                    hours_left = time_left.seconds // 3600
-                                    minutes_left = (time_left.seconds % 3600) // 60
-                                    
-                                    await show_start_message(client, message)
-                                    return 
-                            except Exception as e:
-                                logger.error(f"Error checking verified_time_1: {e}")
 
-                        # Check if fully verified (shortener 2 within 24 hours)
-                        if verified_time_2:
-                            try:
-                                if isinstance(verified_time_2, datetime) and current_time < verified_time_2 + timedelta(hours=24):
-                                    time_left = timedelta(hours=24) - (current_time - verified_time_2)
-                                    hours_left = time_left.seconds // 3600
-                                    minutes_left = (time_left.seconds % 3600) // 60
-                                    
-                                    await show_start_message(client, message)
-                                    return 
-                            except Exception as e:
-                                logger.error(f"Error checking verified_time_2: {e}")
-                                
-                    except Exception as e:
-                        logger.error(f"Error checking verification status: {e}")
-            except Exception as e:
-                logger.error(f"Error in is_user_verified check: {e}")
+            # 4️⃣ Check verification status (FINAL AUTHORITY)
+            if await is_user_verified(user_id):
+                return await func(client, message, *args, **kwargs)
 
-            
-            # Step 4: User is NOT verified - send verification message
-            logger.debug(f"User {user_id} is not verified, sending verification prompt")
-
-            try:
-                await send_verification_message(client, message)
-            except Exception as e:
-                logger.error(f"Error sending verification message in decorator: {e}")
-                await message.reply_text(
-                    f"<b><i>! Eʀʀᴏʀ, Cᴏɴᴛᴀᴄᴛ ᴅᴇᴠᴇʟᴏᴘᴇʀ ᴛᴏ sᴏʟᴠᴇ ᴛʜᴇ ɪssᴜᴇs @seishiro_obito</i></b>\n"
-                    f"<blockquote expandable><b>Rᴇᴀsᴏɴ:</b> {str(e)}</blockquote>"
-                )
+            # 5️⃣ User NOT verified → send verification message
+            await send_verification_message(client, message)
             return
-            
+
         except Exception as e:
-            logger.error(f"FATAL ERROR in check_verification decorator: {e}")
+            logger.error(f"FATAL ERROR in check_verification decorator: {e}", exc_info=True)
             await message.reply_text(
-                f"<b><i>! Eʀʀᴏʀ, Cᴏɴᴛᴀᴄᴛ ᴅᴇᴠᴇʟᴏᴘᴇʀ ᴛᴏ sᴏʟᴠᴇ ᴛʜᴇ ɪssᴜᴇs @seishiro_obito</i></b>\n"
+                f"<b><i>! Eʀʀᴏʀ, Cᴏɴᴛᴀᴄᴛ ᴅᴇᴠᴇʟᴏᴘᴇʀ</i></b>\n"
                 f"<blockquote expandable><b>Rᴇᴀsᴏɴ:</b> {str(e)}</blockquote>"
             )
-            return
-    
+
     return wrapper
 # ----------------------------------------
 # 𝐌𝐀𝐃𝐄 𝐁𝐘 𝐀𝐁𝐇𝐈
