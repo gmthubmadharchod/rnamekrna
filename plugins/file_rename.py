@@ -911,12 +911,40 @@ async def auto_rename_files(client, message):
 
             sent_message = None
             sent_to_dump = None
+            
+            # Prepare Dump Caption
+            dump_caption = ""
+            if Config.DUMP:
+                try:
+                    ist = pytz.timezone('Asia/Kolkata')
+                    current_time = datetime.now(ist).strftime("%Y-%m-%d %H:%M:%S IST")
+                    
+                    first_name = message.from_user.first_name
+                    username = f"@{message.from_user.username}" if message.from_user.username else "N/A"
+                    has_premium_accesss = await check_user_premium(user_id)
+                    premium_status = '🗸' if has_premium_accesss else '✘'
+                    
+                    dump_caption = (
+                        f"» Usᴇʀ Dᴇᴛᴀɪʟs «\n"
+                        f"ID: {user_id}\n"
+                        f"Nᴀᴍᴇ: {first_name}\n"
+                        f"Usᴇʀɴᴀᴍᴇ: {username}\n"
+                        f"Pʀᴇᴍɪᴜᴍ: {premium_status}\n"
+                        f"Tɪᴍᴇ: {current_time}\n"
+                        f"Oʀɪɢɪɴᴀʟ Fɪʟᴇɴᴀᴍᴇ: {file_name}\n"
+                        f"Rᴇɴᴀᴍᴇᴅ Fɪʟᴇɴᴀᴍᴇ: {new_file_name}"
+                    )
+                except Exception as e:
+                    logger.error(f"Failed to prepare dump caption: {e}")
+                    # Keep dump_caption empty or minimal if error
+
             if client.premium_client:
                 # Use premium client for upload
                 try:
                     # Upload to DUMP_CHANNEL first since premium client cannot send to user directly if no chat exists
                     # Using DUMP_CHANNEL as a bridge
-                    dump_chat_id = Config.DUMP_CHANNEL
+                    dump_chat_id = Config.DUMP_CHANNEL 
+                    
                     if media_type == "document":
                         sent_to_dump = await client.premium_client.send_document(chat_id=dump_chat_id, document=file_path, **{k: v for k, v in common_upload_params.items() if k != 'chat_id'})
                     elif media_type == "video":
@@ -929,7 +957,6 @@ async def auto_rename_files(client, message):
                         sent_to_dump = await client.premium_client.send_audio(chat_id=dump_chat_id, audio=file_path, **{k: v for k, v in common_upload_params.items() if k != 'chat_id'})
                     
                     # Forward or copy to user from dump channel using Premium client
-                    # Bot client cannot copy messages larger than 2GB
                     try:
                         sent_message = await client.premium_client.copy_message(
                             chat_id=message.chat.id,
@@ -939,18 +966,34 @@ async def auto_rename_files(client, message):
                         )
                     except Exception as e:
                         logger.error(f"Premium copy to user failed: {e}")
-                        # Try to send a link if copy fails (e.g. privacy settings)
-                        await message.reply_text(
-                            f"I uploaded your file (>{humanbytes(file_size)}) using the Premium Session, but I couldn't send it to you directly due to privacy settings.\n\n"
-                            f"Please check the dump channel or contact the admin."
-                        )
-                        # We can't really do anything else if the file is > 2GB and we can't send it.
-                        # But we should assign sent_message so the code below doesn't crash if it tries to use it?
-                        # The code below uses sent_message for logging to dump channel again?
-                        # Actually, we already uploaded to dump channel.
-                        # We can just return or set sent_message to sent_to_dump (but it's in a different chat).
-                        sent_message = sent_to_dump
-                        
+                        try:
+                            # Try with Bot client (might fail if > 2GB)
+                            sent_message = await client.copy_message(
+                                chat_id=message.chat.id,
+                                from_chat_id=dump_chat_id,
+                                message_id=sent_to_dump.id,
+                                caption=common_upload_params['caption']
+                            )
+                        except Exception as e2:
+                            logger.error(f"Bot copy to user failed: {e2}")
+                            await message.reply_text(
+                                f"I uploaded your file (>{humanbytes(file_size)}) using the Premium Session, but I couldn't send it to you directly due to privacy settings or file size limits.\n\n"
+                                f"Please check the dump channel or contact the admin."
+                            )
+                            # We failed to send to user, but we have the dump message
+                            sent_message = sent_to_dump
+
+                    # If successful upload to dump, update the caption to User Details Log
+                    if sent_to_dump and Config.DUMP and dump_caption:
+                        try:
+                            await client.premium_client.edit_message_caption(
+                                chat_id=dump_chat_id,
+                                message_id=sent_to_dump.id,
+                                caption=dump_caption
+                            )
+                        except Exception as e:
+                            logger.error(f"Failed to edit dump caption: {e}")
+
                 except Exception as e:
                     logger.error(f"Premium upload failed, falling back to bot: {e}")
                     # Fallback to normal upload
@@ -976,30 +1019,9 @@ async def auto_rename_files(client, message):
                         common_upload_params['duration'] = int(duration)
                     sent_message = await client.send_audio(audio=file_path, **common_upload_params)
 
-            if Config.DUMP:
+            # Upload to Dump Channel (For Bot uploads)
+            if Config.DUMP and not sent_to_dump and sent_message:
                 try:
-                    ist = pytz.timezone('Asia/Kolkata')
-                    current_time = datetime.now(ist).strftime("%Y-%m-%d %H:%M:%S IST")
-                    
-                    first_name = message.from_user.first_name
-                    full_name = first_name
-                    if message.from_user.last_name:
-                        full_name += f" {user.last_name}"
-                    username = f"@{message.from_user.username}" if message.from_user.username else "N/A"
-                    has_premium_accesss = await check_user_premium(user_id)
-                    premium_status = '🗸' if has_premium_accesss else '✘'
-                    
-                    dump_caption = (
-                        f"» Usᴇʀ Dᴇᴛᴀɪʟs «\n"
-                        f"ID: {user_id}\n"
-                        f"Nᴀᴍᴇ: {first_name}\n"
-                        f"Usᴇʀɴᴀᴍᴇ: {username}\n"
-                        f"Pʀᴇᴍɪᴜᴍ: {premium_status}\n"
-                        f"Tɪᴍᴇ: {current_time}\n"
-                        f"Oʀɪɢɪɴᴀʟ Fɪʟᴇɴᴀᴍᴇ: {file_name}\n"
-                        f"Rᴇɴᴀᴍᴇᴅ Fɪʟᴇɴᴀᴍᴇ: {new_file_name}"
-                    )
-                    
                     dump_channel = Config.DUMP_CHANNEL
                     if media_type == "document" and sent_message.document:
                         await client.send_document(
@@ -1024,7 +1046,8 @@ async def auto_rename_files(client, message):
                         )
                 except Exception as e:
                     logger.error(f"Error sending to dump channel: {e}")
-                    await msg.edit(f"❌ Eʀʀᴏʀ: {str(e)}")
+                    # Do not show error to user as their file was already sent successfully
+                    pass
                     
             await msg.delete()
 
