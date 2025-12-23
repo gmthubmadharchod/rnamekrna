@@ -806,92 +806,77 @@ async def is_user_verified(user_id):
 async def verify_command(client, message: Message):
     """Check verification status or initiate verification"""
     user_id = message.from_user.id
-    
+
+    # ── 1️⃣ Premium users bypass ─────────────────────────────
     try:
-        # Check if user has premium
         if await check_user_premium(user_id):
             await message.reply_text(
                 "✨ <b>Yᴏᴜ ʜᴀᴠᴇ Pʀᴇᴍɪᴜᴍ Aᴄᴄᴇss!</b>\n\n"
                 "Pʀᴇᴍɪᴜᴍ ᴜsᴇʀs ᴅᴏɴ'ᴛ ɴᴇᴇᴅ ᴛᴏ ᴠᴇʀɪғʏ.",
                 reply_markup=InlineKeyboardMarkup([[
-                    InlineKeyboardButton("•Sᴇᴇ ᴘʟᴀɴs •", callback_data="seeplan")
+                    InlineKeyboardButton("• Sᴇᴇ ᴘʟᴀɴs •", callback_data="seeplan")
                 ]])
             )
             return
     except Exception as e:
-        logger.error(f"Error checking premium status in verify command: {e}")
-        # Continue with verification check even if premium check fails
+        logger.error(f"Premium check failed in /verify: {e}")
 
-    try:
-        # Check if user is already verified
-        if await is_user_verified(user_id):
-            try:
-                user_data = await rexbots.col.find_one({"_id": user_id}) or {}
-                verification_data = user_data.get("verification", {})
-                
-                # Get verification settings
-                settings = await rexbots.get_verification_settings()
-                verified_time_1 = verification_data.get("verified_time_1")
-                verified_time_2 = verification_data.get("verified_time_2")
-                
-                current_time = datetime.utcnow()
-                
-                # Check if fully verified (shortener 1 within 24 hours)
-                if verified_time_1:
-                    try:
-                        if isinstance(verified_time_1, datetime) and current_time < verified_time_1 + timedelta(hours=24):
-                            time_left = timedelta(hours=24) - (current_time - verified_time_1)
-                            hours_left = time_left.seconds // 3600
-                            minutes_left = (time_left.seconds % 3600) // 60
-                            
-                            await message.reply_text(
-                                f"✅ Yᴏᴜ ᴀʀᴇ ᴀʟʀᴇᴀᴅʏ ᴠᴇʀɪғɪᴇᴅ!\n\n"
-                                f"⏰ Tɪᴍᴇ ʟᴇғᴛ: {hours_left}ʜ {minutes_left}ᴍ",
-                                reply_markup=InlineKeyboardMarkup([[
-                                    InlineKeyboardButton("•Sᴇᴇ ᴘʟᴀɴs •", callback_data="seeplan")
-                                ]])
-                            )
-                            return
-                    except Exception as e:
-                        logger.error(f"Error checking verified_time_1: {e}")
+    # ── 2️⃣ Load user verification data ─────────────────────
+    user_data = await rexbots.col.find_one({"_id": user_id}) or {}
+    verification = user_data.get("verification", {})
 
-                # Check if fully verified (shortener 2 within 24 hours)
-                if verified_time_2:
-                    try:
-                        if isinstance(verified_time_2, datetime) and current_time < verified_time_2 + timedelta(hours=24):
-                            time_left = timedelta(hours=24) - (current_time - verified_time_2)
-                            hours_left = time_left.seconds // 3600
-                            minutes_left = (time_left.seconds % 3600) // 60
-                            
-                            await message.reply_text(
-                                f"✅ Yᴏᴜ ᴀʀᴇ ᴀʟʀᴇᴀᴅʏ ᴠᴇʀɪғɪᴇᴅ!\n\n"
-                                f"⏰ Tɪᴍᴇ ʟᴇғᴛ: {hours_left}ʜ {minutes_left}ᴍ",
-                                reply_markup=InlineKeyboardMarkup([[
-                                    InlineKeyboardButton("•Sᴇᴇ ᴘʟᴀɴs •", callback_data="seeplan")
-                                ]])
-                            )
-                            return
-                    except Exception as e:
-                        logger.error(f"Error checking verified_time_2: {e}")
-                        
-            except Exception as e:
-                logger.error(f"Error checking verification status: {e}")
-                # Continue to generate new verification link if there's an error
-    
-    except Exception as e:
-        logger.error(f"Error in is_user_verified check: {e}")
-    
-    # User not verified - generate and send verification link
+    verified_time_1 = verification.get("verified_time_1")
+    verified_time_2 = verification.get("verified_time_2")
+    shortener_2_at = verification.get("shortener_2_available_at")
+
+    current_time = datetime.utcnow()
+    messages = []
+
+    # ── 3️⃣ Verify 1 status ─────────────────────────────────
+    if isinstance(verified_time_1, datetime):
+        if current_time < verified_time_1 + timedelta(hours=24):
+            left = (verified_time_1 + timedelta(hours=24)) - current_time
+            h, m = divmod(int(left.total_seconds()) // 60, 60)
+            messages.append(f"✅ <b>Vᴇʀɪꜰʏ 𝟷</b>: {h}ʜ {m}ᴍ ʟᴇғᴛ")
+        else:
+            messages.append("❌ <b>Vᴇʀɪꜰʏ 𝟷</b>: ᴇxᴘɪʀᴇᴅ")
+
+    # ── 4️⃣ Verify 2 status (gap aware) ─────────────────────
+    if isinstance(verified_time_2, datetime):
+        if current_time < verified_time_2 + timedelta(hours=24):
+            left = (verified_time_2 + timedelta(hours=24)) - current_time
+            h, m = divmod(int(left.total_seconds()) // 60, 60)
+            messages.append(f"✅ <b>Vᴇʀɪꜰʏ 𝟸</b>: {h}ʜ {m}ᴍ ʟᴇғᴛ")
+        else:
+            messages.append("❌ <b>Vᴇʀɪꜰʏ 𝟸</b>: ᴇxᴘɪʀᴇᴅ")
+
+    elif isinstance(shortener_2_at, datetime):
+        if current_time < shortener_2_at:
+            gap_left = shortener_2_at - current_time
+            h, m = divmod(int(gap_left.total_seconds()) // 60, 60)
+            messages.append(f"⏳ <b>Vᴇʀɪꜰʏ 𝟸</b> ᴀᴠᴀɪʟᴀʙʟᴇ ɪɴ: {h}ʜ {m}ᴍ")
+        else:
+            messages.append("⚠️ <b>Vᴇʀɪꜰʏ 𝟸</b>: ᴘᴇɴᴅɪɴɢ (ᴜsᴇ /verify)")
+
+    # ── 5️⃣ If any verification info exists → show status ───
+    if messages:
+        await message.reply_text(
+            "🔐 <b>Yᴏᴜʀ Vᴇʀɪꜰɪᴄᴀᴛɪᴏɴ Sᴛᴀᴛᴜs</b>\n\n" + "\n".join(messages),
+            reply_markup=InlineKeyboardMarkup([[
+                InlineKeyboardButton("• Sᴇᴇ ᴘʟᴀɴs •", callback_data="seeplan")
+            ]])
+        )
+        return
+
+    # ── 6️⃣ Not verified → generate verification link ───────
     try:
         await send_verification_message(client, message)
     except Exception as e:
         logger.error(f"Error sending verification message: {e}")
         await message.reply_text(
-            f"<b><i>! Eʀʀᴏʀ, Cᴏɴᴛᴀᴄᴛ ᴅᴇᴠᴇʟᴏᴘᴇʀ ᴛᴏ sᴏʟᴠᴇ ᴛʜᴇ ɪssᴜᴇs @seishiro_obito</i></b>\n"
+            "<b><i>! Eʀʀᴏʀ, Cᴏɴᴛᴀᴄᴛ Dᴇᴠᴇʟᴏᴘᴇʀ</i></b>\n"
             f"<blockquote expandable><b>Rᴇᴀsᴏɴ:</b> {str(e)}</blockquote>"
         )
-
-
 
 # ----------------------------------------
 # 𝐌𝐀𝐃𝐄 𝐁𝐘 𝐀𝐁𝐇𝐈
