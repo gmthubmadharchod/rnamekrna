@@ -1,3 +1,5 @@
+from config import Config
+
 nsfw_keywords = {
     "general": [
         "porn", "sex", "nude", "naked", "boobs", "tits", "pussy", "dick", "cock", "ass",
@@ -43,6 +45,8 @@ nsfw_keywords = {
 exception_keywords = ["nxivm", "classroom", "assassination", "geass"]
 
 async def check_anti_nsfw(new_name, message):
+    if not Config.ANTI_NSFW:
+        return False
     lower_name = new_name.lower()
     for keyword in exception_keywords:
         if keyword.lower() in lower_name:
