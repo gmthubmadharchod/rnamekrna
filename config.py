@@ -17,6 +17,7 @@ class Config(object):
     BOT_TOKEN = os.environ.get("BOT_TOKEN", "")
     STRING_SESSION = os.environ.get("STRING_SESSION", "")
     PORT = os.environ.get("PORT", "8980")
+    ANTI_NSFW = os.environ.get("ANTI_NSFW", "False").lower() == "true"
 
     # database config
     DB_NAME = os.environ.get("DB_NAME", "RexBots")     
