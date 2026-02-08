@@ -15,23 +15,23 @@ class Config(object):
     API_ID    = os.environ.get("API_ID", "")
     API_HASH  = os.environ.get("API_HASH", "")
     BOT_TOKEN = os.environ.get("BOT_TOKEN", "")
-    PORT = os.environ.get("PORT", "8980")
+    PORT = os.environ.get("PORT", "8080")
 
     # database config
-    DB_NAME = os.environ.get("DB_NAME", "RexBots")     
+    DB_NAME = os.environ.get("DB_NAME", "renamedb")     
     DB_URL  = os.environ.get("DB_URL", "")
  
     # other configs
-    ADMIN_URL = "https://t.me/adityaabhinav"
+    ADMIN_URL = "https://t.me/SonuPorsa"
     DUMP_CHANNEL = os.environ.get("DUMP_CHANNEL", "")
     DUMP = True
     BOT_UPTIME  = time.time()
-    START_PIC   = os.environ.get("START_PIC", "")
-    LEADERBOARD_PIC = os.environ.get("LEADERBOARD_PIC", "")
+    START_PIC   = os.environ.get("START_PIC", "https://ar-hosting.pages.dev/1770535957359.jpg")
+    LEADERBOARD_PIC = os.environ.get("LEADERBOARD_PIC", "https://ar-hosting.pages.dev/1770535956689.jpg")
     OWNER_ID = int(os.environ.get("OWNER_ID", ""))
     SUPPORT_CHAT = int(os.environ.get("SUPPORT_CHAT", ""))
     LOG_CHANNEL = int(os.environ.get("LOG_CHANNEL", ""))
-    FSUB_PIC = os.environ.get("FSUB_PIC", "")
+    FSUB_PIC = os.environ.get("FSUB_PIC", "https://ar-hosting.pages.dev/1770535957359.jpg")
     BOT_USERNAME = os.environ.get("BOT_USERNAME", "")
     LEADERBOARD_DELETE_TIMER = 30
     # wes response configuration     
@@ -56,8 +56,8 @@ class Config(object):
 ❍ ᴅᴇᴠᴇʟᴏᴩᴇʀ : <a href="https://t.me/SonuPorsa">ᴄʟɪᴄᴋ ʜᴇʀᴇ</a>
 ❍ ʟᴀɴɢᴜᴀɢᴇ : <a href="https://www.python.org/">ᴄʟɪᴄᴋ ʜᴇʀᴇ</a>
 ❍ ᴅᴀᴛᴀʙᴀꜱᴇ : <a href="https://www.mysql.com/">ᴄʟɪᴄᴋ ʜᴇʀᴇ</a>
-❍ ʜᴏꜱᴛᴇᴅ ᴏɴ : <a href="https://t.me/">ᴄʟɪᴄᴋ ʜᴇʀᴇ</a>
-❍ ᴍᴀɪɴ ᴄʜᴀɴɴᴇʟ : <a href="https://t.me/cantarellabots">ᴄʟɪᴄᴋ ʜᴇʀᴇ</a>
+❍ SUPPORT GROUP : <a href="https://t.me/BotChatall">ᴄʟɪᴄᴋ ʜᴇʀᴇ</a>
+❍ ᴍᴀɪɴ ᴄʜᴀɴɴᴇʟ : <a href="https://t.me/Team_Sonu1">ᴄʟɪᴄᴋ ʜᴇʀᴇ</a>
 
 ➻ ᴄʟɪᴄᴋ ᴏɴ ᴛʜᴇ ʙᴜᴛᴛᴏɴs ɢɪᴠᴇɴ ʙᴇʟᴏᴡ ғᴏʀ ɢᴇᴛᴛɪɴɢ ʙᴀsɪᴄ ʜᴇʟᴩ ᴀɴᴅ ɪɴғᴏ ᴀʙᴏᴜᴛ ᴍᴇ.</blockquote></b>"""
 
