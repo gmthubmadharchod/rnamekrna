@@ -18,7 +18,7 @@ class Config(object):
     PORT = os.environ.get("PORT", "8080")
 
     # database config
-    DB_NAME = os.environ.get("DB_NAME", "renamedb")     
+    DB_NAME = os.environ.get("DB_NAME", "rexbots")     
     DB_URL  = os.environ.get("DB_URL", "")
  
     # other configs
