@@ -581,7 +581,7 @@ async def plan(client, message):
     mention = message.from_user.mention
     keyboard = InlineKeyboardMarkup([[InlineKeyboardButton('⇋ ʙᴀᴄᴋ ᴛᴏ ʜᴏᴍᴇ ⇋', callback_data='home')]])
 
-    PREMIUM_TXT = f"<b>👋 ʜᴇʏ {mention}\n\n🎁 ᴘʀᴇᴍɪᴜᴍ ғᴇᴀᴛᴜʀᴇ ʙᴇɴɪꜰɪᴛꜱ:</blockquote>\n\n›› ɴᴏ ɴᴇᴇᴅ ᴛᴏ ᴏᴘᴇɴ ʟɪɴᴋꜱ\n❏ Gᴇᴛ ᴅɪʀᴇᴄᴛ ᴀᴜᴛᴏ ʀᴇɴᴀᴍɪɴɢ ғᴇᴀᴛᴜʀᴇ ɴᴏ ɴᴇᴇᴅ ғᴏʀ ᴠᴇʀɪғʏ\n›› ᴀᴅ-ғʀᴇᴇ ᴇxᴘᴇʀɪᴇɴᴄᴇ\n❏ Uɴʟɪᴍɪᴛᴇᴅ ᴀᴜᴛᴏ ʀᴇɴᴀᴍɪɴɢ\n\n›› ᴄʜᴇᴄᴋ ʏᴏᴜʀ ᴀᴄᴛɪᴠᴇ ᴘʟᴀɴ: /myplan\n\n • ₹80 - 1 ᴡᴇᴇᴋ\n • ₹100 - 1 ᴍᴏɴᴛʜ\n • ₹750 - 1 ʏᴇᴀʀ\n\n Cᴜsᴛᴏᴍ ᴘʟᴀɴ ᴀʟsᴏ ᴀᴠᴀɪʟᴀʙʟᴇ ᴄᴏɴᴛᴀᴄᴛ ᴀᴛ :- @RexBots_Official</b>"
+    PREMIUM_TXT = f"<b>👋 ʜᴇʏ {mention}\n\n🎁 ᴘʀᴇᴍɪᴜᴍ ғᴇᴀᴛᴜʀᴇ ʙᴇɴɪꜰɪᴛꜱ:</blockquote>\n\n›› ɴᴏ ɴᴇᴇᴅ ᴛᴏ ᴏᴘᴇɴ ʟɪɴᴋꜱ\n❏ Gᴇᴛ ᴅɪʀᴇᴄᴛ ᴀᴜᴛᴏ ʀᴇɴᴀᴍɪɴɢ ғᴇᴀᴛᴜʀᴇ ɴᴏ ɴᴇᴇᴅ ғᴏʀ ᴠᴇʀɪғʏ\n›› ᴀᴅ-ғʀᴇᴇ ᴇxᴘᴇʀɪᴇɴᴄᴇ\n❏ Uɴʟɪᴍɪᴛᴇᴅ ᴀᴜᴛᴏ ʀᴇɴᴀᴍɪɴɢ\n\n›› ᴄʜᴇᴄᴋ ʏᴏᴜʀ ᴀᴄᴛɪᴠᴇ ᴘʟᴀɴ: /myplan\n\n • ₹50 - 1 ᴡᴇᴇᴋ\n • ₹150 - 1 ᴍᴏɴᴛʜ\n • ₹1100 - 1 ʏᴇᴀʀ\n\n Cᴜsᴛᴏᴍ ᴘʟᴀɴ ᴀʟsᴏ ᴀᴠᴀɪʟᴀʙʟᴇ ᴄᴏɴᴛᴀᴄᴛ ᴀᴛ :- @RexBots_Official</b>"
 
     await message.reply_photo(
         photo="https://envs.sh/Wdj.jpg",
